@@ -1,0 +1,10 @@
+{
+  "description": "Explore and compare August 2026 land price changes across South Korea, with regional search, hierarchy navigation, rankings, charts, and sortable data.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
