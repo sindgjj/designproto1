@@ -13,6 +13,12 @@ body { margin: 0; min-width: 320px; }
 button { font: inherit; color: inherit; }
 .sensor-page { min-height: 100vh; }
 .sensor-header { height: 64px; padding: 0 max(24px, calc((100vw - 1180px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ddddd6; background: rgba(245,244,240,.95); }
+.serial-button { min-height: 36px; padding: 0 14px; border: 1px solid #303533; border-radius: 4px; display: flex; align-items: center; gap: 8px; background: #303533; color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+.serial-button i { width: 7px; height: 7px; border-radius: 50%; background: #bfc4c0; }
+.serial-button.connected { border-color: #557661; background: white; color: #557661; }
+.serial-button.connected i { background: #579069; box-shadow: 0 0 0 3px rgba(87,144,105,.12); }
+.serial-button:disabled { opacity: .65; cursor: wait; }
+.serial-error { margin-bottom: 16px; padding: 12px 14px; border: 1px solid #d9b6ad; border-radius: 5px; background: #f7ece8; color: #8f4636; font-size: 12px; }
 .sensor-brand { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
 .sensor-logo { width: 29px; height: 29px; display: grid; place-items: center; border-radius: 4px; background: #303533; color: white; }
 .sensor-logo svg, .state-icon svg { width: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -81,6 +87,7 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 600px) {
   .sensor-header { height: 56px; padding: 0 18px; }
+  .serial-button { padding: 0 10px; }
   .sensor-shell { padding: 40px 18px 28px; }
   .sensor-intro { align-items: start; flex-direction: column; margin-bottom: 30px; }
   .sensor-intro h1 { font-size: 34px; }
