@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 interface SensorReading {
@@ -85,6 +85,10 @@ export default function App() {
   const [readings, setReadings] = useState<SensorReading[]>([])
   const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [databaseError, setDatabaseError] = useState('')
+  const [serialState, setSerialState] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected')
+  const [serialError, setSerialError] = useState('')
+  const portRef = useRef<SerialPortLike | null>(null)
+  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null)
 
   const current = readings.at(-1)?.value ?? null
   const average = useMemo(() => readings.length ? Math.round(readings.reduce((sum, item) => sum + item.value, 0) / readings.length) : null, [readings])
@@ -142,6 +146,65 @@ export default function App() {
     }
   }, [])
 
+  const connectSerial = async () => {
+    const serial = (navigator as SerialNavigator).serial
+    if (!serial) {
+      setSerialError('이 브라우저는 Web Serial API를 지원하지 않습니다. Chrome 또는 Edge를 사용하세요.')
+      return
+    }
+
+    try {
+      setSerialError('')
+      setSerialState('connecting')
+      const port = await serial.requestPort()
+      await port.open({ baudRate: 9600 })
+      portRef.current = port
+      setSerialState('connected')
+
+      if (!port.readable) throw new Error('시리얼 입력 스트림을 열 수 없습니다.')
+      const reader = port.readable.getReader()
+      readerRef.current = reader
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split(/\r?\n/)
+        buffer = lines.pop() ?? ''
+        for (const line of lines) {
+          const match = line.trim().match(/-?\d+(?:\.\d+)?$/)
+          if (!match) continue
+          const reading = Number(match[0])
+          if (!Number.isFinite(reading)) continue
+          const now = new Date().toLocaleTimeString('ko-KR', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+          })
+          setReadings((previous) => [...previous, { time: now, value: reading }].slice(-100))
+        }
+      }
+    } catch (error) {
+      if ((error as DOMException).name !== 'NotFoundError') {
+        setSerialError(error instanceof Error ? error.message : '시리얼 연결 중 오류가 발생했습니다.')
+      }
+      setSerialState('disconnected')
+    }
+  }
+
+  const disconnectSerial = async () => {
+    await readerRef.current?.cancel().catch(() => undefined)
+    readerRef.current = null
+    await portRef.current?.close().catch(() => undefined)
+    portRef.current = null
+    setSerialState('disconnected')
+  }
+
+  useEffect(() => () => {
+    void readerRef.current?.cancel()
+    void portRef.current?.close()
+  }, [])
+
   return (
     <main className="sensor-page">
       <header className="sensor-header">
@@ -150,6 +213,18 @@ export default function App() {
           <span>시설 안전 모니터링</span>
         </div>
         <span className={`live-badge ${connectionState}`}><i /> {connectionState === 'connected' ? 'LIVE' : connectionState === 'connecting' ? 'CONNECTING' : 'ERROR'}</span>
+        <div className="header-actions">
+          <span className={`live-badge ${connectionState}`}><i /> {connectionState === 'connected' ? 'DB LIVE' : connectionState === 'connecting' ? 'CONNECTING' : 'DB ERROR'}</span>
+          <button
+            className={`serial-button ${serialState === 'connected' ? 'connected' : ''}`}
+            onClick={serialState === 'connected' ? disconnectSerial : connectSerial}
+            disabled={serialState === 'connecting'}
+            type="button"
+          >
+            <i />
+            {serialState === 'connecting' ? '연결 중...' : serialState === 'connected' ? '포트 연결 해제' : '포트 연결'}
+          </button>
+        </div>
       </header>
 
       <div className="sensor-shell">
@@ -163,6 +238,8 @@ export default function App() {
         </section>
 
         {databaseError && <div className="serial-error" role="alert">{databaseError}</div>}
+
+        {serialError && <div className="serial-error" role="alert">{serialError}</div>}
 
         <section className="sensor-grid">
           <article className="current-card">
@@ -222,4 +299,16 @@ export default function App() {
       </div>
     </main>
   )
+}
+
+interface SerialPortLike {
+  readable: ReadableStream<Uint8Array> | null
+  open: (options: { baudRate: number }) => Promise<void>
+  close: () => Promise<void>
+}
+
+interface SerialNavigator extends Navigator {
+  serial?: {
+    requestPort: () => Promise<SerialPortLike>
+  }
 }
