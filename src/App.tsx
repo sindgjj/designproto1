@@ -3,7 +3,6 @@ import { createClient } from "@supabase/supabase-js"
 
 interface ReadingRow {
   value: number | string
-  created_at?: string
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
@@ -11,235 +10,124 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
 
-function clamp(value: number) {
-  return Math.min(1, Math.max(0, value))
-}
+const clamp = (value: number) => Math.min(1, Math.max(0, value))
+const normalizeSensorValue = (value: number) =>
+  clamp(value <= 1 ? value : value / 1023)
 
-function normalizeSensorValue(value: number) {
-  return clamp(value <= 1 ? value : value / 1023)
-}
-
-function BuddhaFigure() {
+function BuddhaSilhouette() {
   return (
     <svg
       className="buddha-art"
-      viewBox="0 0 500 560"
+      viewBox="0 0 420 500"
       role="img"
-      aria-label="황동빛 가부좌 부처 형상"
+      aria-label="명상하는 부처 실루엣"
     >
       <defs>
-        <radialGradient id="haloCore">
-          <stop offset="0" stopColor="#fff3c9" stopOpacity=".98" />
-          <stop offset=".34" stopColor="#ffd58a" stopOpacity=".66" />
+        <radialGradient id="aura">
+          <stop offset="0" stopColor="#fff1c7" stopOpacity=".82" />
+          <stop offset=".38" stopColor="#e0b96c" stopOpacity=".28" />
           <stop offset="1" stopColor="#d6ac61" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="bronze" x1=".16" y1=".08" x2=".84" y2=".9">
-          <stop offset="0" stopColor="#f0d28f" />
-          <stop offset=".22" stopColor="#b98b48" />
-          <stop offset=".51" stopColor="#6f4d2d" />
-          <stop offset=".77" stopColor="#c39450" />
-          <stop offset="1" stopColor="#49321f" />
+        <linearGradient id="stone" x1=".08" y1=".12" x2=".92" y2=".9">
+          <stop offset="0" stopColor="#8d7652" />
+          <stop offset=".24" stopColor="#3c352b" />
+          <stop offset=".58" stopColor="#171714" />
+          <stop offset=".82" stopColor="#4b3e2d" />
+          <stop offset="1" stopColor="#191816" />
         </linearGradient>
-        <linearGradient id="bronzeLight" x1=".2" x2=".8" y2="1">
-          <stop offset="0" stopColor="#f3dca6" />
-          <stop offset=".42" stopColor="#b57d3f" />
-          <stop offset="1" stopColor="#604026" />
+        <linearGradient id="robeLight" x1="0" y1="0" x2="1" y2=".8">
+          <stop offset="0" stopColor="#d7b874" stopOpacity=".72" />
+          <stop offset=".32" stopColor="#8e754d" stopOpacity=".3" />
+          <stop offset="1" stopColor="#151513" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="robe" x1=".12" y1=".2" x2=".9" y2=".84">
-          <stop offset="0" stopColor="#d4ad65" />
-          <stop offset=".3" stopColor="#7d552e" />
-          <stop offset=".62" stopColor="#b77d3c" />
-          <stop offset="1" stopColor="#49301f" />
-        </linearGradient>
-        <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="20" />
+        <filter id="auraBlur" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="24" />
         </filter>
-        <filter
-          id="sculptureShadow"
-          x="-30%"
-          y="-20%"
-          width="160%"
-          height="160%"
-        >
+        <filter id="objectShadow" x="-30%" y="-20%" width="160%" height="160%">
           <feDropShadow
             dx="0"
-            dy="18"
-            stdDeviation="16"
+            dy="20"
+            stdDeviation="18"
             floodColor="#000"
-            floodOpacity=".5"
+            floodOpacity=".72"
           />
         </filter>
       </defs>
 
-      <g className="halo">
+      <g className="aura">
         <circle
-          className="halo-blur"
-          cx="250"
-          cy="196"
-          r="148"
-          fill="url(#haloCore)"
-          filter="url(#softGlow)"
+          cx="210"
+          cy="148"
+          r="144"
+          fill="url(#aura)"
+          filter="url(#auraBlur)"
         />
-        <circle
-          className="halo-disc"
-          cx="250"
-          cy="196"
-          r="116"
-          fill="none"
-          stroke="#ffd58a"
-          strokeWidth="1.4"
-        />
-        <circle
-          className="halo-ring"
-          cx="250"
-          cy="196"
-          r="136"
-          fill="none"
-          stroke="#d6ac61"
-          strokeWidth=".8"
-        />
+        <circle className="aura-line outer" cx="210" cy="148" r="116" />
+        <circle className="aura-line inner" cx="210" cy="148" r="91" />
       </g>
 
-      <g className="sculpture" filter="url(#sculptureShadow)">
-        <ellipse
-          cx="250"
-          cy="496"
-          rx="184"
-          ry="37"
-          fill="#322216"
-          opacity=".84"
+      <g className="statue" filter="url(#objectShadow)">
+        <path
+          className="statue-form"
+          d="M210 42c-7 0-11 9-11 19-15 5-24 18-24 34v8c-17 12-27 34-25 59 3 39 26 70 60 70s57-31 60-70c2-25-8-47-25-59v-8c0-16-9-29-24-34 0-10-4-19-11-19Z"
+        />
+        <path
+          className="statue-form"
+          d="M170 211c-29 10-50 32-59 68-7 29-4 77 14 105h170c18-28 21-76 14-105-9-36-30-58-59-68-10 16-23 24-40 24s-30-8-40-24Z"
+        />
+        <path
+          className="statue-form"
+          d="M117 292c-15 15-25 39-28 72-2 21 5 36 22 43 20 8 54-4 99-37l-22-27-58 31c7-31 16-59 27-82Z"
+        />
+        <path
+          className="statue-form"
+          d="M303 292c15 15 25 39 28 72 2 21-5 36-22 43-20 8-54-4-99-37l22-27 58 31c-7-31-16-59-27-82Z"
+        />
+        <path
+          className="statue-form"
+          d="M189 352c8-5 15-6 21-2 6-4 13-3 21 2 11 7 16 18 14 31-10 9-22 13-35 13s-25-4-35-13c-2-13 3-24 14-31Z"
+        />
+        <path
+          className="statue-form"
+          d="M124 384c-54 15-88 43-103 83-5 14 5 24 26 27 61 8 115-2 163-31-31-49-59-76-86-79Z"
+        />
+        <path
+          className="statue-form"
+          d="M296 384c54 15 88 43 103 83 5 14-5 24-26 27-61 8-115-2-163-31 31-49 59-76 86-79Z"
+        />
+        <path
+          className="statue-base"
+          d="M41 474c54 6 110-2 169-25 59 23 115 31 169 25-14 17-70 26-169 26s-155-9-169-26Z"
         />
 
         <path
-          d="M197 313c-33 14-59 45-66 87-3 18 4 31 24 34l95 11 95-11c20-3 27-16 24-34-7-42-33-73-66-87Z"
-          fill="url(#robe)"
+          className="robe-light"
+          d="M171 213c-23 11-38 34-44 69-5 33-1 67 12 102l48-24 23-10V235c-16 0-29-7-39-22Z"
         />
         <path
-          d="M155 405c-45 9-77 32-94 66-7 15 0 30 17 34 59 13 117 10 172-13-34-45-63-73-95-87Z"
-          fill="url(#bronze)"
+          className="robe-seam"
+          d="M171 229c-15 42-18 88-9 139M137 287c18 10 34 13 49 11"
         />
         <path
-          d="M345 405c45 9 77 32 94 66 7 15 0 30-17 34-59 13-117 10-172-13 34-45 63-73 95-87Z"
-          fill="url(#bronzeLight)"
-        />
-        <path
-          d="M78 486c54 9 111 7 172-8 61 15 118 17 172 8-5 23-68 40-172 40S83 509 78 486Z"
-          fill="#8a5d32"
-        />
-        <path
-          d="M91 487c55 6 107 1 159-14 52 15 104 20 159 14"
-          fill="none"
-          stroke="#e2bd72"
-          strokeOpacity=".45"
-          strokeWidth="2"
-        />
-
-        <path
-          d="M184 300c-20 13-34 38-38 71-3 30 8 48 31 55 15 4 40-6 73-30 33 24 58 34 73 30 23-7 34-25 31-55-4-33-18-58-38-71Z"
-          fill="url(#bronzeLight)"
-        />
-        <path
-          d="M250 294c-29 6-53 22-65 45 17 15 39 22 65 22s48-7 65-22c-12-23-36-39-65-45Z"
-          fill="#6c492a"
-        />
-        <path
-          d="M250 306c-7 22-10 49-8 80"
-          fill="none"
-          stroke="#e6c77f"
-          strokeOpacity=".42"
-          strokeWidth="3"
-        />
-        <path
-          d="M184 317c15 37 22 72 20 105M316 317c-15 37-22 72-20 105"
-          fill="none"
-          stroke="#f0d28f"
-          strokeOpacity=".22"
-          strokeWidth="2"
-        />
-
-        <path
-          d="M172 342c-17 12-25 35-21 68 2 16 12 24 29 22 22-2 45-13 70-31l-20-22-47 25c3-25 7-45 11-60Z"
-          fill="url(#bronze)"
-        />
-        <path
-          d="M328 342c17 12 25 35 21 68-2 16-12 24-29 22-22-2-45-13-70-31l20-22 47 25c-3-25-7-45-11-60Z"
-          fill="url(#bronzeLight)"
-        />
-        <path
-          d="M213 391c11-7 25-6 37 10-16 15-35 21-52 17 0-11 5-20 15-27Z"
-          fill="#c39450"
-        />
-        <path
-          d="M287 391c-11-7-25-6-37 10 16 15 35 21 52 17 0-11-5-20-15-27Z"
-          fill="#8a5b31"
-        />
-
-        <path d="M221 279h58l10 42c-24 12-52 12-78 0Z" fill="url(#bronze)" />
-        <ellipse cx="204" cy="234" rx="15" ry="28" fill="#85592f" />
-        <ellipse cx="296" cy="234" rx="15" ry="28" fill="#85592f" />
-        <path
-          d="M250 151c-39 0-60 29-55 73 5 50 25 79 55 79s50-29 55-79c5-44-16-73-55-73Z"
-          fill="url(#bronzeLight)"
-        />
-        <path
-          d="M215 222c10-6 20-6 30 0M255 222c10-6 20-6 30 0"
-          fill="none"
-          stroke="#4a301d"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M220 230c8 5 16 5 23 0M257 230c7 5 15 5 23 0"
-          fill="none"
-          stroke="#49301f"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M250 224c-4 18-5 29 1 33 4 2 8 1 12-2"
-          fill="none"
-          stroke="#684427"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M235 271c10 6 20 6 30 0"
-          fill="none"
-          stroke="#4d321e"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M205 207c10-31 26-47 45-48 20 1 36 17 46 48-5-42-19-64-46-64s-41 22-45 64Z"
-          fill="#76502d"
-        />
-
-        <ellipse cx="250" cy="139" rx="28" ry="25" fill="url(#bronze)" />
-        <path d="M232 135c4-22 13-34 18-39 6 6 15 18 18 39" fill="#9f6d38" />
-        <circle cx="250" cy="100" r="7" fill="#c69652" />
-        <path
-          d="M226 126c15 6 33 6 48 0M219 145c20 8 42 8 62 0"
-          fill="none"
-          stroke="#e2bd72"
-          strokeOpacity=".34"
-          strokeWidth="2"
+          className="face-mark"
+          d="M177 150c9-5 18-5 27 0m12 0c9-5 18-5 27 0m-46 39c9 5 18 5 27 0"
         />
       </g>
     </svg>
   )
 }
 
-function ConnectionIcon() {
+function LinkIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 12a4 4 0 0 1 4-4h3m1-3 3 3-3 3M16 12a4 4 0 0 1-4 4H9m-1 3-3-3 3-3" />
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M7.5 6H6a4 4 0 0 0 0 8h2m4.5 0H14a4 4 0 0 0 0-8h-2m-4 4h4" />
     </svg>
   )
 }
 
 export default function App() {
   const [latestValue, setLatestValue] = useState<number | null>(null)
-  const [manualLevel, setManualLevel] = useState(0.38)
+  const [manualLevel, setManualLevel] = useState(0.34)
   const [inputMode, setInputMode] = useState<"manual" | "sensor">("manual")
   const [databaseState, setDatabaseState] =
     useState<"connecting" | "connected" | "offline">("connecting")
@@ -259,7 +147,7 @@ export default function App() {
     const loadLatest = async () => {
       const { data, error } = await supabase
         .from("readings")
-        .select("value, created_at")
+        .select("value")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle()
@@ -306,9 +194,7 @@ export default function App() {
   const connectSerial = async () => {
     const serial = (navigator as SerialNavigator).serial
     if (!serial) {
-      setSerialError(
-        "Web Serial을 지원하는 Chrome 또는 Edge에서 연결해 주세요.",
-      )
+      setSerialError("Chrome 또는 Edge에서 센서를 연결해 주세요.")
       return
     }
 
@@ -321,7 +207,7 @@ export default function App() {
       setSerialState("connected")
       setInputMode("sensor")
 
-      if (!port.readable) throw new Error("센서 입력 스트림을 열 수 없습니다.")
+      if (!port.readable) throw new Error("센서 입력을 열 수 없습니다.")
       const reader = port.readable.getReader()
       readerRef.current = reader
       const decoder = new TextDecoder()
@@ -340,12 +226,11 @@ export default function App() {
           if (Number.isFinite(reading)) setLatestValue(reading)
         }
       }
+      setSerialState("disconnected")
     } catch (error) {
       if ((error as DOMException).name !== "NotFoundError") {
         setSerialError(
-          error instanceof Error
-            ? error.message
-            : "센서 연결 중 오류가 발생했습니다.",
+          error instanceof Error ? error.message : "센서 연결에 실패했습니다.",
         )
       }
       setSerialState("disconnected")
@@ -370,42 +255,36 @@ export default function App() {
   )
 
   const sensorAvailable = latestValue !== null
-  const sensorLevel = sensorAvailable ? normalizeSensorValue(latestValue) : 0
   const level =
-    inputMode === "sensor" && sensorAvailable ? sensorLevel : manualLevel
-  const height = level * 2
+    inputMode === "sensor" && sensorAvailable
+      ? normalizeSensorValue(latestValue)
+      : manualLevel
   const stateLabel =
     level === 0
       ? "고요"
       : level < 0.34
-        ? "호흡"
+        ? "깨어남"
         : level < 0.72
           ? "상승"
           : "초월"
   const experienceStyle = { "--level": level } as CSSProperties
+  const isOnline = serialState === "connected" || databaseState === "connected"
 
   return (
     <main className="meditation-page" style={experienceStyle}>
-      <div className="ambient-light" aria-hidden="true" />
       <header className="meditation-header">
         <a className="brand" href="#" aria-label="명상 시간 홈">
-          <span className="brand-mark" />
+          <span className="brand-symbol" />
           <span>명상 시간</span>
         </a>
-        <div className="connection-area">
-          <span
-            className={`connection-status ${
-              serialState === "connected" || databaseState === "connected"
-                ? "online"
-                : ""
-            }`}
-          >
+        <div className="header-actions">
+          <span className={`connection-status ${isOnline ? "online" : ""}`}>
             <i />
             {serialState === "connected"
-              ? "센서 연결됨"
+              ? "SENSOR CONNECTED"
               : databaseState === "connected"
-                ? "데이터 수신 중"
-                : "체험 모드"}
+                ? "LIVE DATA"
+                : "EXPERIENCE MODE"}
           </span>
           <button
             className="connect-button"
@@ -415,7 +294,7 @@ export default function App() {
             }
             disabled={serialState === "connecting"}
           >
-            <ConnectionIcon />
+            <LinkIcon />
             {serialState === "connecting"
               ? "연결 중"
               : serialState === "connected"
@@ -426,64 +305,38 @@ export default function App() {
       </header>
 
       <section className="experience" aria-label="인터랙티브 명상 경험">
-        <div className="intro-copy">
-          <p className="eyebrow">INTERACTIVE MEDITATION · 01</p>
-          <h1>
-            고요함이
-            <br />
-            빛이 되는 순간
-          </h1>
-          <p className="intro-description">
-            호흡과 감각에 집중해 보세요.
-            <br />
-            당신의 입력이 상승과 빛으로 변환됩니다.
-          </p>
+        <div className="title-block">
+          <p>RESPOND TO STILLNESS</p>
+          <h1>고요에서, 빛으로</h1>
+          <span>당신의 감각이 만드는 작은 초월</span>
         </div>
 
-        <div className="visual-stage">
-          <div className="vertical-guide" aria-hidden="true">
-            <span>2m</span>
-            <i />
-            <span>0m</span>
-          </div>
+        <div className="stage">
           <div className="figure-float">
-            <BuddhaFigure />
+            <BuddhaSilhouette />
           </div>
           <div className="ground-shadow" aria-hidden="true" />
-          <div className="ground-line" aria-hidden="true" />
         </div>
 
-        <aside className="state-panel" aria-label="현재 명상 상태">
-          <p>현재 상태</p>
+        <div className="readout state-readout">
+          <span>현재 상태</span>
           <strong>{stateLabel}</strong>
-          <div className="state-rule" />
-          <dl>
-            <div>
-              <dt>부양 높이</dt>
-              <dd>
-                {height.toFixed(2)}
-                <small> m</small>
-              </dd>
-            </div>
-            <div>
-              <dt>후광 강도</dt>
-              <dd>
-                {Math.round(level * 100)}
-                <small> %</small>
-              </dd>
-            </div>
-          </dl>
-        </aside>
+        </div>
+        <div className="readout height-readout">
+          <span>LEVITATION</span>
+          <strong>{(level * 2).toFixed(2)}</strong>
+          <small>M</small>
+        </div>
       </section>
 
-      <section className="control-dock" aria-label="센서 입력 제어">
+      <section className="control-bar" aria-label="명상 레벨 제어">
         <div className="mode-switch" role="group" aria-label="입력 방식">
           <button
             className={inputMode === "manual" ? "active" : ""}
             type="button"
             onClick={() => setInputMode("manual")}
           >
-            체험 입력
+            직접 체험
           </button>
           <button
             className={inputMode === "sensor" ? "active" : ""}
@@ -494,9 +347,10 @@ export default function App() {
             센서 입력
           </button>
         </div>
+
         <div className="level-control">
           <div className="level-meta">
-            <label htmlFor="meditation-level">LEVEL</label>
+            <label htmlFor="meditation-level">명상 레벨</label>
             <output htmlFor="meditation-level">{level.toFixed(2)}</output>
           </div>
           <input
@@ -508,17 +362,13 @@ export default function App() {
             value={level}
             disabled={inputMode === "sensor"}
             onChange={(event) => setManualLevel(Number(event.target.value))}
-            aria-label="명상 단계"
           />
-          <div className="range-labels">
-            <span>고요</span>
-            <span>초월</span>
-          </div>
         </div>
-        <p className="control-note">
+
+        <p className="control-hint">
           {inputMode === "sensor"
-            ? "센서의 움직임을 실시간으로 반영합니다."
-            : "슬라이더를 움직여 변화의 흐름을 경험하세요."}
+            ? "입력에 집중하세요"
+            : "천천히 움직여 보세요"}
         </p>
       </section>
 
