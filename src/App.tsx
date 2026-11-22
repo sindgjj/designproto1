@@ -18,109 +18,6 @@ const clamp = (value: number) => Math.min(1, Math.max(0, value))
 const normalizeSensorValue = (value: number) =>
   clamp(value <= 1 ? value : value / 1023)
 
-function BuddhaSilhouette() {
-  return (
-    <svg
-      className="buddha-art"
-      viewBox="0 0 420 500"
-      role="img"
-      aria-label="명상하는 부처 실루엣"
-    >
-      <defs>
-        <radialGradient id="aura">
-          <stop offset="0" stopColor="#fff1c7" stopOpacity=".82" />
-          <stop offset=".38" stopColor="#e0b96c" stopOpacity=".28" />
-          <stop offset="1" stopColor="#d6ac61" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="stone" x1=".08" y1=".12" x2=".92" y2=".9">
-          <stop offset="0" stopColor="#8d7652" />
-          <stop offset=".24" stopColor="#3c352b" />
-          <stop offset=".58" stopColor="#171714" />
-          <stop offset=".82" stopColor="#4b3e2d" />
-          <stop offset="1" stopColor="#191816" />
-        </linearGradient>
-        <linearGradient id="robeLight" x1="0" y1="0" x2="1" y2=".8">
-          <stop offset="0" stopColor="#d7b874" stopOpacity=".72" />
-          <stop offset=".32" stopColor="#8e754d" stopOpacity=".3" />
-          <stop offset="1" stopColor="#151513" stopOpacity="0" />
-        </linearGradient>
-        <filter id="auraBlur" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="24" />
-        </filter>
-        <filter id="objectShadow" x="-30%" y="-20%" width="160%" height="160%">
-          <feDropShadow
-            dx="0"
-            dy="20"
-            stdDeviation="18"
-            floodColor="#000"
-            floodOpacity=".72"
-          />
-        </filter>
-      </defs>
-
-      <g className="aura">
-        <circle
-          cx="210"
-          cy="148"
-          r="144"
-          fill="url(#aura)"
-          filter="url(#auraBlur)"
-        />
-        <circle className="aura-line outer" cx="210" cy="148" r="116" />
-        <circle className="aura-line inner" cx="210" cy="148" r="91" />
-      </g>
-
-      <g className="statue" filter="url(#objectShadow)">
-        <path
-          className="statue-form"
-          d="M210 42c-7 0-11 9-11 19-15 5-24 18-24 34v8c-17 12-27 34-25 59 3 39 26 70 60 70s57-31 60-70c2-25-8-47-25-59v-8c0-16-9-29-24-34 0-10-4-19-11-19Z"
-        />
-        <path
-          className="statue-form"
-          d="M170 211c-29 10-50 32-59 68-7 29-4 77 14 105h170c18-28 21-76 14-105-9-36-30-58-59-68-10 16-23 24-40 24s-30-8-40-24Z"
-        />
-        <path
-          className="statue-form"
-          d="M117 292c-15 15-25 39-28 72-2 21 5 36 22 43 20 8 54-4 99-37l-22-27-58 31c7-31 16-59 27-82Z"
-        />
-        <path
-          className="statue-form"
-          d="M303 292c15 15 25 39 28 72 2 21-5 36-22 43-20 8-54-4-99-37l22-27 58 31c-7-31-16-59-27-82Z"
-        />
-        <path
-          className="statue-form"
-          d="M189 352c8-5 15-6 21-2 6-4 13-3 21 2 11 7 16 18 14 31-10 9-22 13-35 13s-25-4-35-13c-2-13 3-24 14-31Z"
-        />
-        <path
-          className="statue-form"
-          d="M124 384c-54 15-88 43-103 83-5 14 5 24 26 27 61 8 115-2 163-31-31-49-59-76-86-79Z"
-        />
-        <path
-          className="statue-form"
-          d="M296 384c54 15 88 43 103 83 5 14-5 24-26 27-61 8-115-2-163-31 31-49 59-76 86-79Z"
-        />
-        <path
-          className="statue-base"
-          d="M41 474c54 6 110-2 169-25 59 23 115 31 169 25-14 17-70 26-169 26s-155-9-169-26Z"
-        />
-
-        <path
-          className="robe-light"
-          d="M171 213c-23 11-38 34-44 69-5 33-1 67 12 102l48-24 23-10V235c-16 0-29-7-39-22Z"
-        />
-        <path
-          className="robe-seam"
-          d="M171 229c-15 42-18 88-9 139M137 287c18 10 34 13 49 11"
-        />
-        <path
-          className="face-mark"
-          d="M177 150c9-5 18-5 27 0m12 0c9-5 18-5 27 0m-46 39c9 5 18 5 27 0"
-        />
-      </g>
-    </svg>
-  )
-}
-
 function LinkIcon() {
   return (
     <svg viewBox="0 0 20 20" aria-hidden="true">
@@ -311,15 +208,18 @@ export default function App() {
       <section className="experience" aria-label="인터랙티브 명상 경험">
         <div className="title-block">
           <p>RESPOND TO STILLNESS</p>
-          <h1>고요에서, 빛으로</h1>
-          <span>당신의 감각이 만드는 작은 초월</span>
+          <h1>in-sense</h1>
+          <span className="title-subtitle">빛으로 보는 명상</span>
         </div>
 
         <div className="stage">
           <div className="figure-float">
-            <BuddhaSilhouette />
+            <img
+              className="buddha-image"
+              src={`${import.meta.env.BASE_URL}images/buddha.png`}
+              alt="명상하는 불상"
+            />
           </div>
-          <div className="ground-shadow" aria-hidden="true" />
         </div>
 
         <div className="readout state-readout">
