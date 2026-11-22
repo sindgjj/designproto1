@@ -5,8 +5,12 @@ interface ReadingRow {
   value: number | string
 }
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+const rawSupabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+const supabaseUrl = rawSupabaseUrl
+  ?.trim()
+    .replace(/\/rest\/v1\/?.*$/, '')
+  .replace(/\/$/, '')
 const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
 

@@ -4,7 +4,7 @@
 
 파일 위치:
 - 폰트 `public/fonts/`: Pretendard-Regular, Medium, SemiBold, RisingCHAI-ExtraBold, RisingCHAI-Light (.woff2)
-- 달 이미지 `public/images/moon.webp` (800×800, 투명 배경)
+- 불상 이미지 `불상.png` (투명 배경)
 
 ```css
 /* 메인 폰트 Pretendard */
@@ -28,7 +28,7 @@
   --ink-muted: #9a9ea7;
   --line: #2a2d33;
   --off: #5d6169;
-  --moon-glow: #9db8ff;
+  --buddha-glow: #d8c394;
   --status-on: #4cc38a;
   --danger: #f97066;
 
@@ -49,12 +49,11 @@ button { border: 0; border-radius: 0; }
 .t-caption { font-size: 12px; font-weight: 400; }
 @media (max-width: 767px) { .t-display { font-size: 24px; } }
 
-/* 센서 달 */
-.moon { --level: 0; width: min(72vw, 360px); aspect-ratio: 1; margin: 0 auto; animation: moon-float 6s ease-in-out infinite alternate; }
-.moon img { display: block; width: 100%; height: 100%; object-fit: contain;
-  filter: brightness(calc(0.25 + 0.75 * var(--level))) drop-shadow(0 0 calc(var(--level) * 48px) var(--moon-glow));
+.buddha { --level: 0; width: min(72vw, 360px); aspect-ratio: 1; margin: 0 auto; animation: buddha-float 6s ease-in-out infinite alternate; }
+.buddha img { display: block; width: 100%; height: 100%; object-fit: contain;
+  filter: brightness(calc(0.25 + 0.75 * var(--level))) drop-shadow(0 0 calc(var(--level) * 48px) var(--buddha-glow));
   transition: filter .4s; }
-.moon[data-power="off"] img { filter: brightness(0.12) grayscale(1); }
-@keyframes moon-float { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-@media (prefers-reduced-motion: reduce) { .moon { animation: none; } }
+.buddha[data-power="off"] img { filter: brightness(0.12) grayscale(1); }
+@keyframes buddha-float { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+@media (prefers-reduced-motion: reduce) { .buddha { animation: none; } }
 ```
